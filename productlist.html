@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="瀏覽北德文鋁圈商品型錄，依型號、尺寸、PCD 與製程篩選，並複製規格至門市詢價。">
+  <meta name="theme-color" content="#0b0d0e">
+  <title>商品型錄｜北德文鋁圈</title>
+  <link rel="icon" href="./public/images/wheels/18/2341古銅色.PNG" type="image/png">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <script defer src="./assets/js/app.js"></script>
+</head>
+<body class="catalog-page">
+  <header class="site-header site-header--dark">
+    <a class="brand" href="index.html" aria-label="北德文鋁圈首頁">
+      <span class="brand__mark" aria-hidden="true">北</span>
+      <span class="brand__text">
+        <strong>北德文鋁圈</strong>
+        <small>WHEEL CATALOG</small>
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="主要導覽">
+      <a href="index.html">首頁</a>
+      <a class="is-active" href="productlist.html">商品型錄</a>
+      <a href="index.html#inquiry">詢價指南</a>
+    </nav>
+    <a class="header-action" href="index.html#inquiry">詢價流程</a>
+  </header>
+
+  <main>
+    <section class="catalog-hero">
+      <div class="section-shell catalog-hero__inner">
+        <div>
+          <p class="eyebrow eyebrow--dark"><span></span> PRODUCT CATALOG</p>
+          <h1>鋁圈商品</h1>
+          <p>產品查詢。</p>
+        </div>
+        <dl class="catalog-summary" aria-label="型錄資料統計">
+          <div><dt id="modelCount">—</dt><dd>型號</dd></div>
+          <div><dt id="specCount">—</dt><dd>規格</dd></div>
+          <div><dt>13–22</dt><dd>吋</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="catalog-tools" aria-label="型錄搜尋與篩選">
+      <div class="section-shell catalog-tools__inner">
+        <label class="catalog-search" for="searchInput">
+          <span aria-hidden="true">⌕</span>
+          <input type="search" id="searchInput" placeholder="搜尋型號或表面處理…" autocomplete="off">
+        </label>
+        <div class="catalog-tools__status">
+          <span id="resultCounter" aria-live="polite">載入中…</span>
+          <button type="button" id="filterTrigger" class="filter-trigger" aria-controls="filterDrawer" aria-expanded="false">
+            篩選條件 <span id="activeFilterCount" class="filter-count hidden">0</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <aside id="filterDrawer" class="drawer" aria-hidden="true" aria-labelledby="filterTitle">
+      <div class="drawer-header">
+        <div><p>FILTER</p><h2 id="filterTitle">精確篩選</h2></div>
+        <button type="button" id="filterClose" class="icon-button" aria-label="關閉篩選條件">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <section>
+          <h3>吋數</h3>
+          <div id="filterSizes" class="chips"></div>
+        </section>
+        <section>
+          <h3>PCD 孔徑</h3>
+          <div id="filterPCD" class="chips"></div>
+        </section>
+        <section>
+          <h3>製造工藝</h3>
+          <div id="filterCategories" class="chips"></div>
+        </section>
+      </div>
+      <div class="drawer-footer">
+        <button type="button" id="filterClear" class="button button--outline">清除條件</button>
+        <button type="button" id="filterApply" class="button button--dark">查看結果</button>
+      </div>
+    </aside>
+    <button type="button" id="drawerBackdrop" class="backdrop hidden" aria-label="關閉篩選條件"></button>
+
+    <section class="catalog-results section-shell" aria-labelledby="resultCounter">
+      <div id="activeFilters" class="active-filters" aria-live="polite"></div>
+      <div id="grid" class="product-grid"></div>
+      <div id="emptyState" class="empty-state hidden">
+        <span>NO MATCH</span>
+        <h2>找不到符合條件的款式</h2>
+        <p>試著清除部分篩選，或只使用型號關鍵字搜尋。</p>
+        <button type="button" id="emptyClear" class="button button--dark">清除所有條件</button>
+      </div>
+      <div id="sentinel" aria-hidden="true"></div>
+      <div id="loader" class="loader" aria-label="正在載入商品">
+        <span></span><span></span><span></span>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="detailModal" class="product-modal" aria-labelledby="modalTitle">
+    <div class="product-modal__content">
+      <button type="button" class="modal-close icon-button" aria-label="關閉商品規格">&times;</button>
+      <div class="product-modal__grid">
+        <div class="product-modal__media" id="modalMedia">
+        </div>
+        <div class="product-modal__info">
+          <p id="modalCategory" class="modal-eyebrow"></p>
+          <h2 id="modalTitle"></h2>
+          <p id="modalSubtitle" class="modal-subtitle"></p>
+
+          <div class="variant-heading">
+            <div><strong>可選規格</strong><span id="modalVariantCount"></span></div>
+            <small>帳面規格，實際適配請由門市確認</small>
+          </div>
+          <div class="variant-table-wrap">
+            <table class="variant-table">
+              <thead><tr><th>吋數</th><th>PCD</th><th>J 值</th><th>ET</th><th>中心孔</th></tr></thead>
+              <tbody id="modalVariants"></tbody>
+            </table>
+          </div>
+
+          <div class="inquiry-panel">
+            <div><strong>準備詢價</strong><p>複製型號與規格，再連同車型、年份交給門市確認。</p></div>
+            <button type="button" id="copyInquiry" class="button button--accent">複製詢價資訊</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer site-footer--light">
+    <div class="site-footer__inner">
+      <div><strong>北德文鋁圈</strong><p>鋁圈品牌型錄・門市詢價導引</p></div>
+      <div class="site-footer__links"><a href="index.html">首頁</a><a href="productlist.html">商品型錄</a><a href="index.html#inquiry">詢價指南</a></div>
+      <small>&copy; 2026 北德文鋁圈</small>
+    </div>
+  </footer>
+</body>
+</html>
