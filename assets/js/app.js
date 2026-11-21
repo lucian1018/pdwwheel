@@ -11,6 +11,7 @@ let catalogMeta = null;
 let currentFilters = {
   size: '',
   pcd: '',
+  j: '',
   category: '',
   search: '',
 };
