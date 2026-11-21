@@ -109,12 +109,17 @@ function sortVariants(variants) {
 
 function renderFilterButtons() {
   const sizes = uniqueSorted(allProducts.map((item) => item.spec?.['吋']), true);
+  const jValues = uniqueSorted(
+    allProducts.map((item) => normalizeNumericFilterValue(item.spec?.['J值'])),
+    true,
+  );
   const pcds = uniqueSorted(allProducts.map((item) => item.spec?.['孔徑']));
   const categories = ['鑄造', '旋壓', '鍛造'].filter((category) => (
     allProducts.some((item) => item.category === category)
   ));
 
   renderChips('filterSizes', sizes, 'size', (value) => `${value} 吋`);
+  renderChips('filterJValues', jValues, 'j', (value) => `${value}J`);
   renderChips('filterPCD', pcds, 'pcd');
   renderChips('filterCategories', categories, 'category');
 }
@@ -141,10 +146,18 @@ function uniqueSorted(values, numeric = false) {
     : a.localeCompare(b, 'zh-Hant', { numeric: true }));
 }
 
+function normalizeNumericFilterValue(value) {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue)
+    ? String(numericValue)
+    : String(value ?? '').trim();
+}
+
 function readFiltersFromUrl() {
   const params = new URLSearchParams(window.location.search);
   currentFilters = {
     size: params.get('size') || '',
+    j: params.get('j') || '',
     pcd: params.get('pcd') || '',
     category: params.get('category') || '',
     search: params.get('search') || '',
@@ -169,6 +182,7 @@ function applyFilters() {
 
     const matchingVariants = item.variants.filter((spec) => (
       (!currentFilters.size || spec['吋'] === currentFilters.size) &&
+      (!currentFilters.j || normalizeNumericFilterValue(spec['J值']) === currentFilters.j) &&
       (!currentFilters.pcd || spec['孔徑'] === currentFilters.pcd)
     ));
 
@@ -384,7 +398,7 @@ function setDrawer(open) {
 }
 
 function clearFilters() {
-  currentFilters = { size: '', pcd: '', category: '', search: '' };
+  currentFilters = { size: '', j: '', pcd: '', category: '', search: '' };
   syncFilterControls();
   applyFilters();
 }
@@ -397,6 +411,7 @@ function renderActiveFilters() {
   const labels = {
     search: `搜尋：${currentFilters.search}`,
     size: `${currentFilters.size} 吋`,
+    j: `${currentFilters.j}J`,
     pcd: `PCD ${currentFilters.pcd}`,
     category: currentFilters.category,
   };
@@ -422,7 +437,7 @@ function renderActiveFilters() {
 }
 
 function updateFilterBadge() {
-  const count = ['size', 'pcd', 'category'].filter((key) => currentFilters[key]).length;
+  const count = ['size', 'j', 'pcd', 'category'].filter((key) => currentFilters[key]).length;
   const badge = document.getElementById('activeFilterCount');
   if (!badge) return;
   badge.textContent = count;
